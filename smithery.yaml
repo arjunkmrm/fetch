@@ -1,2 +1,2 @@
 runtime: typescript
-target: local
+target: remote
