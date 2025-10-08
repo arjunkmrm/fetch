@@ -1,5 +1,7 @@
 # Fetch MCP Server
 
+[![smithery badge](https://smithery.ai/badge/@arjunkmrm/fetch-test1)](https://smithery.ai/server/@arjunkmrm/fetch-test1)
+
 A Model Context Protocol (MCP) server for making HTTP requests and extracting data from web pages.
 
 ## Features
