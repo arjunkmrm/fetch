@@ -41,6 +41,7 @@ async function makeRequest(
 	url: string,
 	options: RequestOptions,
 ): Promise<Response> {
+	console.log(`[makeRequest] Fetching URL: ${url}`)
 	const controller = new AbortController()
 	const timeoutId = setTimeout(() => controller.abort(), options.timeout)
 
@@ -61,18 +62,23 @@ async function makeRequest(
 		clearTimeout(timeoutId)
 
 		if (!response.ok) {
+			console.error(`[makeRequest] HTTP error: ${response.status} ${response.statusText}`)
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`)
 		}
 
+		console.log(`[makeRequest] Success: ${response.status} from ${url}`)
 		return response
 	} catch (error) {
 		clearTimeout(timeoutId)
 		if (error instanceof Error) {
 			if (error.name === "AbortError") {
+				console.error(`[makeRequest] Timeout for URL: ${url}`)
 				throw new Error("Request timeout")
 			}
+			console.error(`[makeRequest] Error: ${error.message}`)
 			throw error
 		}
+		console.error(`[makeRequest] Unknown error for URL: ${url}`)
 		throw new Error("Unknown error occurred")
 	}
 }
@@ -87,6 +93,9 @@ function resolveUrl(baseUrl: string, relativeUrl: string): string {
 }
 
 export default function createServer({ config }: { config: Config }) {
+	console.log('[Fetch Server] Initializing server...')
+	console.log('[Fetch Server] Config:', JSON.stringify(config, null, 2))
+	
 	const server = new McpServer({
 		name: "Fetch Server",
 		version: "1.0.0",
@@ -106,6 +115,7 @@ export default function createServer({ config }: { config: Config }) {
 			url: z.string().describe("The URL to fetch"),
 		},
 		async ({ url }) => {
+			console.log(`[Tool: fetch_url] Called with URL: ${url}`)
 			try {
 				const response = await makeRequest(url, requestOptions)
 				const content = await response.text()
@@ -133,6 +143,7 @@ export default function createServer({ config }: { config: Config }) {
 					contentInfo.description = metaDescription || null
 				}
 
+				console.log(`[Tool: fetch_url] Successfully fetched and parsed URL`)
 				return {
 					content: [
 						{
@@ -151,6 +162,7 @@ export default function createServer({ config }: { config: Config }) {
 					],
 				}
 			} catch (error) {
+				console.error(`[Tool: fetch_url] Error: ${error instanceof Error ? error.message : "Unknown error"}`)
 				return {
 					content: [
 						{
@@ -192,6 +204,7 @@ export default function createServer({ config }: { config: Config }) {
 				.describe("Maximum number of elements to return"),
 		},
 		async ({ url, selector, attribute, limit }) => {
+			console.log(`[Tool: extract_elements] Called with URL: ${url}, selector: ${selector}`)
 			try {
 				const response = await makeRequest(url, requestOptions)
 				const content = await response.text()
@@ -200,6 +213,7 @@ export default function createServer({ config }: { config: Config }) {
 				const elements = $(selector).slice(0, limit)
 
 				if (elements.length === 0) {
+					console.log(`[Tool: extract_elements] No elements found for selector: ${selector}`)
 					return {
 						content: [
 							{
@@ -272,6 +286,7 @@ export default function createServer({ config }: { config: Config }) {
 					}
 				})
 
+				console.log(`[Tool: extract_elements] Extracted ${extracted.length} elements`)
 				return {
 					content: [
 						{
@@ -291,6 +306,7 @@ export default function createServer({ config }: { config: Config }) {
 					],
 				}
 			} catch (error) {
+				console.error(`[Tool: extract_elements] Error: ${error instanceof Error ? error.message : "Unknown error"}`)
 				return {
 					content: [
 						{
@@ -317,6 +333,7 @@ export default function createServer({ config }: { config: Config }) {
 			url: z.string().describe("The URL to analyze"),
 		},
 		async ({ url }) => {
+			console.log(`[Tool: get_page_metadata] Called with URL: ${url}`)
 			try {
 				const response = await makeRequest(url, requestOptions)
 				const content = await response.text()
@@ -376,6 +393,7 @@ export default function createServer({ config }: { config: Config }) {
 					metadata.canonical = resolveUrl(response.url, canonical)
 				}
 
+				console.log(`[Tool: get_page_metadata] Successfully extracted metadata`)
 				return {
 					content: [
 						{
@@ -385,6 +403,7 @@ export default function createServer({ config }: { config: Config }) {
 					],
 				}
 			} catch (error) {
+				console.error(`[Tool: get_page_metadata] Error: ${error instanceof Error ? error.message : "Unknown error"}`)
 				return {
 					content: [
 						{
@@ -403,5 +422,6 @@ export default function createServer({ config }: { config: Config }) {
 		},
 	)
 
+	console.log('[Fetch Server] Server initialized successfully')
 	return server.server
 }
