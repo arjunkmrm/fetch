@@ -1,4 +1,5 @@
 # Fetch MCP Server
+[![smithery badge](https://smithery.ai/badge/@arjunkmrm/fetch-test)](https://smithery.ai/server/@arjunkmrm/fetch-test)
 
 A Model Context Protocol (MCP) server for making HTTP requests and extracting data from web pages.
 
@@ -57,6 +58,14 @@ npm run build
 ```
 
 ## Deployment
+
+### Installing via Smithery
+
+To install Fetch automatically via [Smithery](https://smithery.ai/server/@arjunkmrm/fetch-test):
+
+```bash
+npx -y @smithery/cli install @arjunkmrm/fetch-test
+```
 
 This server is designed to be deployed on [Smithery](https://smithery.ai) as a remote MCP server.
 
