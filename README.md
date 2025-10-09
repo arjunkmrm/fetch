@@ -1,5 +1,7 @@
 # Fetch MCP Server
 
+[![smithery badge](https://smithery.ai/badge/@arjunkmrm/fetch-3)](https://smithery.ai/protocol-server/@arjunkmrm/fetch-3)
+
 A Model Context Protocol (MCP) server for making HTTP requests and extracting data from web pages.
 
 ## Features
@@ -45,6 +47,15 @@ Extract comprehensive metadata from a web page.
 
 ## Development
 
+### Installing via Smithery
+
+To install Fetch MCP Server automatically via [Smithery](https://smithery.ai/protocol-server/@arjunkmrm/fetch-3):
+
+```bash
+npx -y @smithery/cli install @arjunkmrm/fetch-3
+```
+
+### Manual Installation
 ```bash
 # Install dependencies
 npm install
